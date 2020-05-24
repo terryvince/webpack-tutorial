@@ -1,0 +1,19 @@
+{
+  "name": "webpack-tutorial",
+  "version": "1.0.0",
+  "description": "webpack tutorial",
+  "main": "index.js",
+  "author": "terryvvan",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "webpack ./build/webpack.config.js --mode development",
+    "build": "webpack ./build/webpack.config.js --mode production"
+  },
+  "devDependencies": {
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11"
+  }
+}
+  
