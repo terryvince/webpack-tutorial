@@ -62,15 +62,17 @@ module.exports = {
     ]
   },
   plugins:[
+    new CopyWebpackPlugin([
+      {from:path.join(rootPath,'/public/*'),to:distPath,ignore:[path.join(rootPath,'/public/index.html')]}
+    ]),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
       chunkFilename: '[id].css',
     }),
     new HtmlWebpackPlugin({
-      meta: {viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'},
       minify:isProd,
       hash:isProd,
-      template:path.join(rootPath,'./public/index.html')
+      template:path.join(rootPath,'public/index.html')
     }),
     new webpack.HotModuleReplacementPlugin()
   ]
