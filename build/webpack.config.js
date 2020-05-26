@@ -2,12 +2,14 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 let env = process.env.NODE_ENV;
 let isProd = env=='production';
 let rootPath = path.resolve(__dirname, '../');
-let distPath = path.resolve(rootPath, './dist');
-let srcPath = path.resolve(rootPath, './src');
+let distPath = path.resolve(rootPath, 'dist');
+let srcPath = path.resolve(rootPath, 'src');
 
 module.exports = {
   mode: env,
@@ -17,11 +19,13 @@ module.exports = {
   output: {
     path: distPath,
     filename: 'js/[name].js',
-    publicPath: './'
+    // publicPath: './'
   },
   devServer: {
-    contentBase: distPath,
-    compress: true,
+    contentBase: './',  //默认是项目根目录，服务器开启目录即index.html所在目录
+    // publicPath:'./dist',
+    progress:true,
+    compress: isProd,
     host:'localhost',
     hot:true,
     port: 9000,
@@ -62,9 +66,7 @@ module.exports = {
     ]
   },
   plugins:[
-    new CopyWebpackPlugin([
-      {from:path.join(rootPath,'/public/*'),to:distPath,ignore:[path.join(rootPath,'/public/index.html')]}
-    ]),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css',
       chunkFilename: '[id].css',
@@ -73,6 +75,12 @@ module.exports = {
       minify:isProd,
       hash:isProd,
       template:path.join(rootPath,'public/index.html')
+    }),
+    new CopyWebpackPlugin({
+      patterns:[
+        {from:path.resolve(rootPath,'public'),to:distPath}
+      ],
+      options:{}
     }),
     new webpack.HotModuleReplacementPlugin()
   ]
