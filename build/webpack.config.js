@@ -3,6 +3,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 let env = process.env.NODE_ENV;
 let isProd = env=='production';
@@ -21,13 +22,13 @@ module.exports = {
     // publicPath: './'
   },
   resolve: {
-    extensions: ['.js'], // 解析扩展。（当我们通过路导入文件，找不到改文件时，会尝试加入这些后缀继续寻找文件）
+    extensions: ['.js','.vue','.jsx'], // 解析扩展。（当我们通过路导入文件，找不到改文件时，会尝试加入这些后缀继续寻找文件）
     alias: {
         '@': srcPath // 在项目中使用@符号代替src路径，导入文件路径更方便
     }
   },
   devServer: {
-    historyApiFallback: true,
+    // historyApiFallback: true,
     contentBase: './dist',  //默认是项目根目录，服务器开启目录即index.html所在目录
     // publicPath:'./dist',
     progress:true,
@@ -58,6 +59,21 @@ module.exports = {
   module: {
     rules: [
       {
+        // 符合以 .js 或者 .jsx 结尾的文件, 使用 babel-loader
+        test: /\.(js|jsx)$/,
+        // 打包时, 不去node_modules 目录下找
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        }
+      },
+      {
+        test: /\.vue$/,
+        use:{
+            loader: 'vue-loader'
+        }
+      },
+      {
         test: /\.css$/,
         use: [
           // isProd?{
@@ -67,7 +83,7 @@ module.exports = {
           //     hmr: !isProd,   //启用热更新
           //   },
           // }:
-          'style-loader',
+          'vue-style-loader',
           'css-loader' 
         ]
       }
@@ -79,6 +95,7 @@ module.exports = {
     //   filename: 'css/[name].css',
     //   chunkFilename: '[id].css',
     // }),
+    new VueLoaderPlugin(),
     new HtmlWebpackPlugin({
       // minify:isProd,
       // hash:isProd,
